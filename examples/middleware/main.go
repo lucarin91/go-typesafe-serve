@@ -5,15 +5,12 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/lucarin91/go-typesafe-serve/controller"
-	"github.com/lucarin91/go-typesafe-serve/request"
-	"github.com/lucarin91/go-typesafe-serve/response"
-	"github.com/lucarin91/go-typesafe-serve/tsserve"
+	"github.com/lucarin91/tss"
 )
 
 type Source string
 
-func Logger(next tsserve.HandlerFunc) tsserve.HandlerFunc {
+func Logger(next tss.HandlerFunc) tss.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("%s %s\n", r.Method, r.URL.Path)
 
@@ -21,7 +18,7 @@ func Logger(next tsserve.HandlerFunc) tsserve.HandlerFunc {
 	}
 }
 
-func CheckSource(next tsserve.HandlerFunc1[Source]) tsserve.HandlerFunc {
+func CheckSource(next tss.HandlerFunc1[Source]) tss.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		source := r.Header.Get("source")
 
@@ -37,20 +34,20 @@ func CheckSource(next tsserve.HandlerFunc1[Source]) tsserve.HandlerFunc {
 	}
 }
 
-func WhoCtrl(_ context.Context, req request.Nope, source Source) (response.Ok, *response.Err) {
+func WhoCtrl(_ context.Context, req tss.Nope, source Source) (tss.Ok, *tss.Err) {
 	if source != "me" {
 		panic("this will never happen, source will be always 'me'")
 	}
 
-	return response.Ok{}, nil
+	return tss.Ok{}, nil
 }
 
 func main() {
 	r := http.NewServeMux()
 
-	middlewares := tsserve.Compose2(Logger, CheckSource)
+	middlewares := tss.Compose2(Logger, CheckSource)
 
-	r.HandleFunc("GET /who", middlewares(controller.ToHandler1(WhoCtrl)))
+	r.HandleFunc("GET /who", middlewares(tss.ToHandler1(WhoCtrl)))
 
 	fmt.Println("Listening on :8080")
 	err := http.ListenAndServe(":8080", r)

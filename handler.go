@@ -1,4 +1,4 @@
-package tsserve
+package tss
 
 import "net/http"
 

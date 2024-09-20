@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/lucarin91/go-typesafe-serve/controller"
-	"github.com/lucarin91/go-typesafe-serve/response"
+	"github.com/lucarin91/tss"
 )
 
+// TODO: this should be multi-thread safe
 type MyState map[string]string
 
 type NumReq struct {
@@ -31,11 +31,11 @@ func (r NumRes) EncodeResponse(w http.ResponseWriter) {
 	_ = json.NewEncoder(w).Encode(r)
 }
 
-func NumCtrl(state MyState) controller.Func[NumReq, NumRes, response.Err] {
-	return func(_ context.Context, req NumReq) (NumRes, *response.Err) {
+func NumCtrl(state MyState) tss.Func[NumReq, NumRes, tss.Err] {
+	return func(_ context.Context, req NumReq) (NumRes, *tss.Err) {
 		numStr, ok := state[req.Num]
 		if !ok {
-			return NumRes{}, &response.Err{
+			return NumRes{}, &tss.Err{
 				Code: http.StatusNotFound,
 			}
 		}
@@ -52,7 +52,7 @@ func main() {
 	}
 
 	r := http.NewServeMux()
-	r.HandleFunc("GET /num/{num}", controller.ToHandler(NumCtrl(state)))
+	r.HandleFunc("GET /num/{num}", tss.ToHandler(NumCtrl(state)))
 
 	fmt.Println("Listening on :8080")
 	err := http.ListenAndServe(":8080", r)

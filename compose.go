@@ -1,4 +1,4 @@
-package tsserve
+package tss
 
 func Compose2[T1 any, T2 any, T3 any, F1 ~func(T1) T2, F2 ~func(T2) T3](f2 F2, f1 F1) func(T1) T3 {
 	return func(t T1) T3 {

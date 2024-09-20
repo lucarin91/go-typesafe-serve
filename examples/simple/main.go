@@ -6,8 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/lucarin91/go-typesafe-serve/controller"
-	"github.com/lucarin91/go-typesafe-serve/response"
+	"github.com/lucarin91/tss"
 )
 
 type HelloReq struct {
@@ -29,13 +28,13 @@ func (r HelloRes) EncodeResponse(w http.ResponseWriter) {
 	_ = json.NewEncoder(w).Encode(r)
 }
 
-func HelloCtrl(_ context.Context, req HelloReq) (HelloRes, *response.Err) {
+func HelloCtrl(_ context.Context, req HelloReq) (HelloRes, *tss.Err) {
 	return HelloRes{Message: "Hello, " + req.Name + "!"}, nil
 }
 
 func main() {
 	r := http.NewServeMux()
-	r.HandleFunc("GET /hello/{name}", controller.ToHandler(HelloCtrl))
+	r.HandleFunc("GET /hello/{name}", tss.ToHandler(HelloCtrl))
 
 	fmt.Println("Listening on :8080")
 	err := http.ListenAndServe(":8080", r)
