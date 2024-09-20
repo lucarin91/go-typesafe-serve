@@ -1,4 +1,4 @@
-module github.com/lucarin91/tss
+module github.com/lucarin91/go-typesafe-serve
 
 go 1.22
 

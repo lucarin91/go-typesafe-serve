@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/lucarin91/tss"
+	tss "github.com/lucarin91/go-typesafe-serve"
 )
 
 type Source string
